@@ -1,0 +1,143 @@
+AppComponent.HTML -----
+
+<hr>
+<div> 
+ 
+    <table align="center" border="1">
+    <thead>
+    <tr>
+      
+        <th (click)="sortData(mob,'mobId')">Mobile Id</th>
+        <th (click)="sortData(mob,'mobName')">Mobile Name</th>
+        <th (click)="sortData(mob,'mobPrice')">Mobile Price</th>
+        <th> ACTION</th>
+      
+    </tr>
+    </thead>
+    <tbody>
+    <tr *ngFor="let user of mob ; let i=index">
+      <td>{{i+1}}=>{{user.mobId}}</td>
+      <td>{{user.mobName}}</td>
+      <td>{{user.mobPrice|currency:'USD'}}
+    
+     <td><button (click)="onRemove(i)" id ="remove{{i+1}}"> Delete</button>
+</td> 
+    </tr>
+    </tbody>
+  </table>
+
+
+AppComponent.TS----
+
+import { Component } from '@angular/core';
+import {RecordService} from './record.service';
+
+
+@Component({
+  selector: 'app-root',
+  templateUrl: './app.component.html',
+  styleUrls: ['./app.component.css']
+})
+export class AppComponent {
+  title = 'PROJECT';
+  mob:Object[];
+  constructor(private data:RecordService) { 
+    let k=this.data.getData();
+     k.subscribe(data=>{
+       this.mob=data;
+    });
+}
+
+ngOnInit() { }
+
+onRemove(i){
+     this.mob.splice(i,1);
+
+}
+sortData(array,key)
+{
+  return array.sort(function columnSort(a,b) {
+    var x=a[key];
+    var y=b[key];
+    if(x<=y)
+    return -1;
+    else
+     return 0; 
+    
+  })
+
+}
+}
+
+
+AppModule.TS-----
+
+import { BrowserModule } from '@angular/platform-browser';
+import { NgModule } from '@angular/core';
+
+import { AppRoutingModule } from './app-routing.module';
+import { AppComponent } from './app.component';
+import {HttpClientModule} from '@angular/common/http';
+
+@NgModule({
+  declarations: [
+    AppComponent
+   
+  ],
+  imports: [
+    BrowserModule,
+    AppRoutingModule,
+    HttpClientModule
+  ],
+  providers: [],
+  bootstrap: [AppComponent]
+})
+export class AppModule { }
+
+recordService.TS------
+
+import { Injectable } from '@angular/core';
+import {HttpClient} from '@angular/common/http';
+
+@Injectable({
+  providedIn: 'root'
+})
+export class RecordService {
+ 
+  mobile:object;
+
+  constructor(private http: HttpClient) { 
+    this.mobile= this.http.get('assets/mobile.json');
+  }
+  getData(){
+    return this.mobile;
+}
+
+}
+
+
+Mobile.JSON
+
+[
+    {"mobId":1001,
+    "mobName":"iPhone",
+    "mobPrice":76661.1
+    },
+    {"mobId":1002,
+    "mobName":"MicroMax",
+    "mobPrice":126661.1
+    },
+    {"mobId":1003,
+    "mobName":"Coolpad",
+    "mobPrice":7823
+    },
+    {"mobId":1004,
+    "mobName":"HTC",
+    "mobPrice":8876
+    },
+    {"mobId":1005,
+    "mobName":"LG",
+    "mobPrice":46661.1
+    }
+    ]
+
